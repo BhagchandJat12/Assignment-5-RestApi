@@ -56,6 +56,7 @@ public class ItemController {
     public Item updatItem(@RequestBody Item item,@PathVariable("itemid") int itemid){
       
         this.service.updateItem( item, itemid);
+        this.repository.save(item);
         return item;
       }
   
