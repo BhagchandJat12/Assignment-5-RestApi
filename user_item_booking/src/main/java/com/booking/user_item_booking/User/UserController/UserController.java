@@ -79,6 +79,7 @@ public class UserController {
     public User updatUser(@RequestBody User user,@PathVariable("userid") int userid){
       
         this.service.updateUser( user,userid);
+        this.repository.save(user);
         return user;
       }
 }
