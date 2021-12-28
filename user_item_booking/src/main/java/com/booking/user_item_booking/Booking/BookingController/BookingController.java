@@ -80,6 +80,7 @@ public class BookingController {
     public Booking updatEvent(@RequestBody Booking booking,@PathVariable("bookingid") int bookingid){
       
         this.service.updateBooking( booking, bookingid);
+        this.repository.save(booking);
         return booking;
       }
 }
