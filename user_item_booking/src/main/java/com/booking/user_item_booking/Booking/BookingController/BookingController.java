@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import com.booking.user_item_booking.Booking.BookingService.BookingService;
 import com.booking.user_item_booking.Booking.Entity.Booking;
 import com.booking.user_item_booking.Booking.Entity.BookingRepository;
@@ -35,12 +37,13 @@ public class BookingController {
       ArrayList<Booking>  booking= repository.getAllBooking();
         return booking;
     }
-
+   @Transactional
     @PostMapping("/booking")
     public ResponseEntity<?> addBooking(@Validated @RequestBody Booking booking){
       try{
-        LocalDate sDate=this.service.addBooking(booking).getStarttime();
-        LocalDate m=null;
+        LocalDate sDate=booking.getStarttime();
+       
+        LocalDate m=LocalDate.parse("0000-01-01");
         ArrayList<Booking> list= repository.getAllBooking();
         Iterator itr=list.iterator();
         
@@ -51,6 +54,7 @@ public class BookingController {
                 m=d;
                
             }else{
+              
                  continue;    
             } 
           } 
@@ -59,9 +63,11 @@ public class BookingController {
           System.out.println("Dates overlapes");
            return ResponseEntity.badRequest().body("Dates overlapes ");
         }else{
-             booking=this.service.addBooking(booking);
-        Booking b= this.repository.save(booking);
-        return ResponseEntity.of(Optional.of(b));    
+         //    booking=this.service.addBooking(booking);
+       // Booking b= this.repository.save(booking);
+        this.repository.addBooking(booking.getId(),booking.getStarttime(),booking.getEndtime());
+
+        return ResponseEntity.of(Optional.of(booking));    
         
         }
       }catch(Exception e){
@@ -75,12 +81,10 @@ public class BookingController {
         this.repository.deleteById(id);
         
     }
-
+    @Transactional
     @PutMapping("/booking/{bookingid}")
     public Booking updatEvent(@RequestBody Booking booking,@PathVariable("bookingid") int bookingid){
-      
-        this.service.updateBooking( booking, bookingid);
-        this.repository.save(booking);
+        this.repository.updateBooking(booking.getUid(),booking.getId(),booking.getStarttime(),booking.getEndtime(), bookingid);
         return booking;
       }
 }

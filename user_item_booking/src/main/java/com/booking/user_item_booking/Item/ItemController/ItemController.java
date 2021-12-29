@@ -3,9 +3,10 @@ package com.booking.user_item_booking.Item.ItemController;
 import java.util.LinkedList;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import com.booking.user_item_booking.Item.Entity.Item;
 import com.booking.user_item_booking.Item.Entity.ItemRepository;
-import com.booking.user_item_booking.Item.ItemService.ItemService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class ItemController {
     @Autowired
     private ItemRepository repository;
     @Autowired
-    private ItemService service;
+   // private ItemService service;
 
     @GetMapping("/item")
     public ResponseEntity<LinkedList<Item>> getAllItem(){
@@ -38,12 +39,12 @@ public class ItemController {
               return  ResponseEntity.of(Optional.of(list));
         }
     }
-
+     @Transactional
     @PostMapping("/item")
     public Item addItem(@Validated @RequestBody Item item){
-        item=this.service.addItem(item);
-    Item i= this.repository.save(item);
-        return i;
+        this.repository.addItem(item.getId(),item.getName(),item.getUid());
+   
+        return item;
     }
 
     @DeleteMapping("/item/{id}")
@@ -51,12 +52,12 @@ public class ItemController {
         this.repository.deleteById(id);
         
     }
-     
+     @Transactional
     @PutMapping("/item/{itemid}")
     public Item updatItem(@RequestBody Item item,@PathVariable("itemid") int itemid){
       
-        this.service.updateItem( item, itemid);
-        this.repository.save(item);
+        this.repository.updateItem(item.getId(),item.getName(),item.getUid(), itemid);
+       
         return item;
       }
   

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import com.booking.user_item_booking.User.Entity.User;
 import com.booking.user_item_booking.User.Entity.UserRepository;
 import com.booking.user_item_booking.User.UserService.UserService;
@@ -34,12 +36,12 @@ public class UserController {
         ArrayList<User> user=repository.getAllUser();
         return user;
     }
-
+     @Transactional
     @PostMapping("/user")
     public ResponseEntity<?> addUser(@Validated @RequestBody User user){
     
-    String s=this.service.addUser(user).getEmail();
-    String m=null;
+    String s=user.getEmail();
+    String m="";
      ArrayList<User> list=repository.getAllUser();
     try{
         Iterator itr=list.iterator();
@@ -58,9 +60,9 @@ public class UserController {
    return ResponseEntity.badRequest().body("Email is already taken");
  // return ResponseEntity.ok().body("Email is already taken");
  }else{
-    user=this.service.addUser(user);
-    User u= this.repository.save(user);
-    return ResponseEntity.of(Optional.of(u));
+    this.repository.addUser(user.getUid(),user.getName(),user.getEmail());
+    
+    return ResponseEntity.of(Optional.of(user));
     }
  
  }catch(Exception e){
@@ -74,12 +76,12 @@ public class UserController {
         this.repository.deleteById(id);
         
     }
-
+    @Transactional
     @PutMapping("/user/{userid}")
     public User updatUser(@RequestBody User user,@PathVariable("userid") int userid){
       
-        this.service.updateUser( user,userid);
-        this.repository.save(user);
+        this.repository.updateUser(user.getUid(),user.getName(),user.getEmail(),userid);
+       
         return user;
       }
 }
