@@ -26,9 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ItemController {
     @Autowired
     private ItemRepository repository;
-    @Autowired
-   // private ItemService service;
-
+   
     @GetMapping("/item")
     public ResponseEntity<LinkedList<Item>> getAllItem(){
             LinkedList<Item> list= repository.getAllItem();

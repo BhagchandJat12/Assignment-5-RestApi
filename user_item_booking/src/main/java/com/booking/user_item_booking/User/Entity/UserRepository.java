@@ -1,6 +1,7 @@
 package com.booking.user_item_booking.User.Entity;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,5 +20,9 @@ public interface UserRepository extends JpaRepository<User,Integer>{
     @Modifying
     @Query(value = "insert into User (Uid,Name,Email) values(:i ,:s,:e)",nativeQuery = true)
     public void addUser(@Param("i") int Uid,@Param("s") String Name,@Param("e") String Email);
+
+    @Modifying
+    @Query(value = "select * from User i where i.Email=:n  ",nativeQuery = true)
+    public LinkedList<User> getByEmail(@Param("n") String email);
 }
 

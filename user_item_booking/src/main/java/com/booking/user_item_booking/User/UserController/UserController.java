@@ -1,14 +1,13 @@
 
 package com.booking.user_item_booking.User.UserController;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import com.booking.user_item_booking.User.Entity.User;
 import com.booking.user_item_booking.User.Entity.UserRepository;
-import com.booking.user_item_booking.User.UserService.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,8 +27,6 @@ public class UserController {
     
     @Autowired
     private UserRepository repository;
-    @Autowired
-    private UserService service;
  
     @GetMapping("/user")
     public ArrayList<User> getAllUser(){
@@ -39,26 +36,14 @@ public class UserController {
      @Transactional
     @PostMapping("/user")
     public ResponseEntity<?> addUser(@Validated @RequestBody User user){
-    
+ try{
     String s=user.getEmail();
-    String m="";
-     ArrayList<User> list=repository.getAllUser();
-    try{
-        Iterator itr=list.iterator();
-        while(itr.hasNext()){  
-            User st=(User)itr.next();
-            if(st.getEmail().equals(s)) {
-                 m=st.getEmail();
-            }else{
-               continue;
-                
-            }
-        }
-        
- if(m.equals(s)){
+     LinkedList<User> list=repository.getByEmail(s);
+   
+    if(list.size()!=0){
    
    return ResponseEntity.badRequest().body("Email is already taken");
- // return ResponseEntity.ok().body("Email is already taken");
+ 
  }else{
     this.repository.addUser(user.getUid(),user.getName(),user.getEmail());
     

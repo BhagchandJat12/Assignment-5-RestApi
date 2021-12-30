@@ -19,6 +19,10 @@ public interface ItemRepository extends JpaRepository<Item,Integer>{
     @Modifying
     @Query(value = "insert into Item (id,Name,Uid) values(:i ,:s,:e)",nativeQuery = true)
     public void addItem(@Param("i") int id,@Param("s") String name,@Param("e") int uid);
+
+    @Modifying
+    @Query(value = "select * from item i where i.Name=:n  ",nativeQuery = true)
+    public LinkedList<Item> getByName(@Param("n") String name);
     
     
 }

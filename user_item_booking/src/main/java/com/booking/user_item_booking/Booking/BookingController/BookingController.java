@@ -2,12 +2,11 @@ package com.booking.user_item_booking.Booking.BookingController;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-import com.booking.user_item_booking.Booking.BookingService.BookingService;
 import com.booking.user_item_booking.Booking.Entity.Booking;
 import com.booking.user_item_booking.Booking.Entity.BookingRepository;
 
@@ -29,8 +28,6 @@ public class BookingController {
     
     @Autowired
     private BookingRepository repository;
-    @Autowired
-    private BookingService service;
 
     @GetMapping("/booking")
     public ArrayList<Booking> getAllUser(){
@@ -42,31 +39,14 @@ public class BookingController {
     public ResponseEntity<?> addBooking(@Validated @RequestBody Booking booking){
       try{
         LocalDate sDate=booking.getStarttime();
+       LinkedList<Booking> list=this.repository.getByStarttime(sDate);
        
-        LocalDate m=LocalDate.parse("0000-01-01");
-        ArrayList<Booking> list= repository.getAllBooking();
-        Iterator itr=list.iterator();
-        
-        while(itr.hasNext()){  
-            Booking st=(Booking)itr.next(); 
-            LocalDate d=st.getStarttime();
-            if(d.equals(sDate)) {
-                m=d;
-               
-            }else{
-              
-                 continue;    
-            } 
-          } 
-         
-        if(m.equals(sDate)){
+        if(list.size()!=0){
           System.out.println("Dates overlapes");
            return ResponseEntity.badRequest().body("Dates overlapes ");
         }else{
-         //    booking=this.service.addBooking(booking);
-       // Booking b= this.repository.save(booking);
+        
         this.repository.addBooking(booking.getId(),booking.getStarttime(),booking.getEndtime());
-
         return ResponseEntity.of(Optional.of(booking));    
         
         }

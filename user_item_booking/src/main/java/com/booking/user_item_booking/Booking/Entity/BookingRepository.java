@@ -1,6 +1,7 @@
 package com.booking.user_item_booking.Booking.Entity;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -8,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface BookingRepository extends JpaRepository<Booking,Integer>{
-    
     @Query(value = "select * from Booking",nativeQuery = true)
     public ArrayList<Booking> getAllBooking();
 
@@ -19,4 +19,8 @@ public interface BookingRepository extends JpaRepository<Booking,Integer>{
     @Modifying
     @Query(value = "insert into Booking (id, StartTime,EndTime) values(:i ,:s,:e)",nativeQuery = true)
     public void addBooking(@Param("i") int id,@Param("s") LocalDate start,@Param("e") LocalDate end);
+
+    @Modifying
+    @Query(value = "select * from Booking i where i.Starttime=:n  ",nativeQuery = true)
+    public LinkedList<Booking> getByStarttime(@Param("n") LocalDate starttime);
 }
